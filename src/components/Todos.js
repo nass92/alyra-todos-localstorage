@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import TodosList from "./TodosList"
 import SelectTodos from "./SelectTodos"
 import AddTodoForm from "./AddTodoForm"
@@ -33,7 +33,7 @@ const initialTodos = [
 ]
 
 const Todos = () => {
-  const [todos, setTodos] = useState(initialTodos)
+  const [todos, setTodos] = useState(() => JSON.parse(window.localStorage.getItem("my-todos-list")) || [])
   const [filter, setFilter] = useState("all")
 
   const addTodo = (text) => {
@@ -48,6 +48,15 @@ const Todos = () => {
   const deleteTodo = (task) => {
     setTodos(todos.filter((el) => el.id !== task.id))
   }
+
+  useEffect(() => {
+    document.title = todos.length ? `Vous avez ${todos.length} chose à faire` : "Préparer votre liste de chose à faire !"
+  }, [todos.length])
+
+  useEffect(() => {
+    window.localStorage.setItem("my-todos-list", JSON.stringify(todos))
+  }, [todos])
+
 
   const toggleCompleteTodo = (task) => {
     setTodos(
